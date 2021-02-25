@@ -1,6 +1,5 @@
-﻿using System;
+﻿using Steam4Intermediate.NodeBehavior;
 using System.Xml;
-using Steam4Intermediate.NodeBehavior;
 
 namespace Steam4Intermediate.Nodes
 {
@@ -9,7 +8,7 @@ namespace Steam4Intermediate.Nodes
         public FundamentalTypeNode(XmlAttributeCollection collection)
             : base(collection)
         {
-            name = GetAttribute( "kind" );
+            name = GetAttribute("kind");
         }
     }
 }

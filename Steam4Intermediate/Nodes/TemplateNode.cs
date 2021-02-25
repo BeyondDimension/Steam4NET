@@ -1,6 +1,5 @@
-﻿using System;
+﻿using Steam4Intermediate.NodeBehavior;
 using System.Xml;
-using Steam4Intermediate.NodeBehavior;
 
 namespace Steam4Intermediate.Nodes
 {
@@ -9,7 +8,6 @@ namespace Steam4Intermediate.Nodes
         public TemplateNode(XmlAttributeCollection collection)
             : base(collection)
         {
-
         }
     }
 }

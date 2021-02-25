@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Steam4Intermediate.NodeBehavior;
+using System;
 using System.Xml;
-using Steam4Intermediate.NodeBehavior;
 
 namespace Steam4Intermediate.Nodes
 {
@@ -9,12 +9,11 @@ namespace Steam4Intermediate.Nodes
         public CXXRecordNode(XmlAttributeCollection collection)
             : base(collection)
         {
-
         }
 
-        private bool ShouldEmitMember( INode member )
+        private bool ShouldEmitMember(INode member)
         {
-            if ( member is CXXMethodNode && ( member.GetName().StartsWith( "operator" ) || member.GetAttribute("virtual") != "1" ) )
+            if (member is CXXMethodNode && (member.GetName().StartsWith("operator") || member.GetAttribute("virtual") != "1"))
             {
                 return false;
             }
@@ -47,23 +46,23 @@ namespace Steam4Intermediate.Nodes
             string className = GetName().Substring(1);
             string macroName = null;
 
-            if(className.StartsWith("Steam"))
+            if (className.StartsWith("Steam"))
             {
                 string classValue = className.Substring(0, className.Length - 3).ToUpper();
                 string intValue = className.Substring(className.Length - 3, 3);
 
                 macroName = classValue + "_INTERFACE_VERSION_" + intValue;
             }
-            else if(className.StartsWith("Client"))
+            else if (className.StartsWith("Client"))
             {
                 macroName = className.ToUpper() + "_INTERFACE_VERSION";
             }
 
-            if(macroName != null)
+            if (macroName != null)
             {
                 string macroValue = generator.FindMacroByName(macroName);
-                
-                if(macroValue != null)
+
+                if (macroValue != null)
                 {
                     generator.EmitLine("[InterfaceVersion(" + macroValue + ")]", depth);
                 }
@@ -89,7 +88,6 @@ namespace Steam4Intermediate.Nodes
             generator.EmitLine("};", depth);
         }
 
-
         private void EmitCodeStruct(Generator generator, int depth, int ident)
         {
             if (Generator.OverrideClasses.Contains(GetName()))
@@ -102,16 +100,16 @@ namespace Steam4Intermediate.Nodes
 
             foreach (INode child in children)
             {
-                if ( child is FieldNode && !String.IsNullOrEmpty( child.GetName() ) )
+                if (child is FieldNode && !String.IsNullOrEmpty(child.GetName()))
                 {
                     INode basetype;
                     bool constness, pointer;
                     bool arraytype = false;
 
                     string size = "";
-                    string types = child.ResolveType( 0, out basetype, out constness, out pointer );
+                    string types = child.ResolveType(0, out basetype, out constness, out pointer);
 
-                    if ( basetype is ArrayTypeNode )
+                    if (basetype is ArrayTypeNode)
                     {
                         size = basetype.GetAttribute("size");
                         types = basetype.ResolveType(1, out basetype, out constness, out pointer);
@@ -119,7 +117,7 @@ namespace Steam4Intermediate.Nodes
                         arraytype = true;
                     }
 
-                    types = generator.ResolveType( types, constness, pointer, true, false );
+                    types = generator.ResolveType(types, constness, pointer, true, false);
 
                     if (types == "CSteamID")
                     {
@@ -130,23 +128,23 @@ namespace Steam4Intermediate.Nodes
                         types = "GameID_t";
                     }
 
-                    if(arraytype)
+                    if (arraytype)
                     {
                         if (types == "SByte")
                         {
                             types = "string";
                         }
-                        else 
+                        else
                         {
                             types += "[]";
                         }
                     }
 
-                    if ( types == "bool" )
+                    if (types == "bool")
                     {
-                        generator.EmitLine( "[MarshalAs(UnmanagedType.I1)]", depth + 1 );
+                        generator.EmitLine("[MarshalAs(UnmanagedType.I1)]", depth + 1);
                     }
-                    else if ( types == "string" )
+                    else if (types == "string")
                     {
                         if (arraytype)
                         {
@@ -157,7 +155,7 @@ namespace Steam4Intermediate.Nodes
                             types = "string";
                         }
                     }
-                    else if ( types == "Byte[]" )
+                    else if (types == "Byte[]")
                     {
                         if (arraytype)
                         {
@@ -181,20 +179,20 @@ namespace Steam4Intermediate.Nodes
                         continue;
                     }
 
-                    generator.EmitLine( String.Format( "public {0} {1};", types, child.GetName() ), depth + 1 );
+                    generator.EmitLine(String.Format("public {0} {1};", types, child.GetName()), depth + 1);
                 }
-                else if(child is EnumNode)
+                else if (child is EnumNode)
                 {
                     // anonymous enum declaration
                     EnumNode innerEnum = child as EnumNode;
                     int callback = innerEnum.EmitCodeInnerStructCallback(generator, depth + 1);
 
-                    if(callback > 0)
+                    if (callback > 0)
                     {
                         generator.InsertLine("[CallbackIdentity(" + callback + ")]", attribMarker, depth);
                     }
                 }
-                else if(child is FieldNode)
+                else if (child is FieldNode)
                 {
                     //  anonymous field like union
                     // not implemented!
@@ -211,11 +209,10 @@ namespace Steam4Intermediate.Nodes
             {
                 EmitCodeClass(generator, depth, ident);
             }
-            else if(ident == 1)
+            else if (ident == 1)
             {
                 EmitCodeStruct(generator, depth, ident);
             }
         }
-
     }
 }

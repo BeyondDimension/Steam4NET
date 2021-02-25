@@ -1,6 +1,5 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Xml;
-using System.Collections.Generic;
 
 namespace Steam4Intermediate
 {
@@ -20,14 +19,11 @@ namespace Steam4Intermediate
 
             attributes = collection;
 
-            id = GetAttribute( "ptr" );
-            name = GetAttribute( "name" );
+            id = GetAttribute("ptr");
+            name = GetAttribute("name");
         }
 
-
-
-
-        public virtual void LinkNode( Generator generator )
+        public virtual void LinkNode(Generator generator)
         {
         }
 
@@ -36,7 +32,7 @@ namespace Steam4Intermediate
             return name;
         }
 
-        public virtual string ResolveType( int depth, out INode type, out bool constness, out bool pointer )
+        public virtual string ResolveType(int depth, out INode type, out bool constness, out bool pointer)
         {
             type = this;
             constness = false;
@@ -45,20 +41,18 @@ namespace Steam4Intermediate
             return GetName();
         }
 
-        public virtual void EmitCode( Generator generator, int depth, int ident )
+        public virtual void EmitCode(Generator generator, int depth, int ident)
         {
         }
 
-
-
-        public void AddChild( INode child )
+        public void AddChild(INode child)
         {
-            children.Add( child );
+            children.Add(child);
         }
 
-        public string GetContextAttribute( string attribute )
+        public string GetContextAttribute(string attribute)
         {
-            if ( context_attributes == null )
+            if (context_attributes == null)
                 return null;
 
             XmlNode attribnode = context_attributes.GetNamedItem(attribute);
@@ -69,17 +63,17 @@ namespace Steam4Intermediate
             return attribnode.Value;
         }
 
-        public string GetAttribute( string attribute )
+        public string GetAttribute(string attribute)
         {
-            XmlNode attribnode = attributes.GetNamedItem( attribute );
+            XmlNode attribnode = attributes.GetNamedItem(attribute);
 
-            if ( attribnode == null )
+            if (attribnode == null)
                 return null;
 
             return attribnode.Value;
         }
 
-        public void SetContextAttributes( XmlAttributeCollection context )
+        public void SetContextAttributes(XmlAttributeCollection context)
         {
             context_attributes = context;
         }
@@ -89,7 +83,7 @@ namespace Steam4Intermediate
             INode extra;
             bool constness, pointer;
 
-            return "[" + this.GetType().Name + "]#" + id + " = " + GetName() + " :: " + ResolveType( 1, out extra, out constness, out pointer ); 
+            return "[" + this.GetType().Name + "]#" + id + " = " + GetName() + " :: " + ResolveType(1, out extra, out constness, out pointer);
         }
     }
 }

@@ -1,10 +1,7 @@
 ﻿using System;
-using Steam4NET.Attributes;
-using Steam4NET.Core;
 
 namespace Steam4NET
 {
-    [NativeType(typeof(UInt64))]
     public class CGameID
     {
         public enum EGameID
@@ -18,14 +15,14 @@ namespace Steam4NET
         private InteropHelp.BitVector64 gameid;
 
         public CGameID()
-            : this( ( ulong )0 )
+            : this((ulong)0)
         {
         }
-        public CGameID( UInt64 id )
+        public CGameID(UInt64 id)
         {
-            gameid = new InteropHelp.BitVector64( id );
+            gameid = new InteropHelp.BitVector64(id);
         }
-        public CGameID( Int32 nAppID )
+        public CGameID(Int32 nAppID)
             : this()
         {
         }
@@ -37,14 +34,14 @@ namespace Steam4NET
             this.ModID = gid.m_nModID;
         }
 
-        public static implicit operator UInt64( CGameID gid )
+        public static implicit operator UInt64(CGameID gid)
         {
             return gid.gameid.Data;
         }
 
-        public static implicit operator CGameID( UInt64 id )
+        public static implicit operator CGameID(UInt64 id)
         {
-            return new CGameID( id );
+            return new CGameID(id);
         }
 
         public static implicit operator CGameID(GameID_t gid)
@@ -56,33 +53,33 @@ namespace Steam4NET
         {
             get
             {
-                return ( UInt32 )gameid[ 0, 0xFFFFFF ];
+                return (UInt32)gameid[0, 0xFFFFFF];
             }
             set
             {
-                gameid[ 0, 0xFFFFFF ] = ( UInt64 )value;
+                gameid[0, 0xFFFFFF] = (UInt64)value;
             }
         }
         public EGameID AppType
         {
             get
             {
-                return ( EGameID )gameid[ 24, 0xFF ];
+                return (EGameID)gameid[24, 0xFF];
             }
             set
             {
-                gameid[ 24, 0xFF ] = ( UInt64 )value;
+                gameid[24, 0xFF] = (UInt64)value;
             }
         }
         public UInt32 ModID
         {
             get
             {
-                return ( UInt32 )gameid[ 32, 0xFFFFFFFF ];
+                return (UInt32)gameid[32, 0xFFFFFFFF];
             }
             set
             {
-                gameid[ 32, 0xFFFFFFFF ] = ( UInt64 )value;
+                gameid[32, 0xFFFFFFFF] = (UInt64)value;
             }
         }
 
@@ -91,45 +88,40 @@ namespace Steam4NET
             return gameid.Data;
         }
 
-        public UInt64 GetValue()
+        public override bool Equals(System.Object obj)
         {
-            return gameid.Data;
-        }
-
-        public override bool Equals( System.Object obj )
-        {
-            if ( obj == null )
+            if (obj == null)
                 return false;
 
             CGameID gid = obj as CGameID;
-            if ( ( System.Object )gid == null )
+            if ((System.Object)gid == null)
                 return false;
 
             return gameid.Data == gid.gameid.Data;
         }
 
-        public bool Equals( CGameID gid )
+        public bool Equals(CGameID gid)
         {
-            if ( ( object )gid == null )
+            if ((object)gid == null)
                 return false;
 
             return gameid.Data == gid.gameid.Data;
         }
 
-        public static bool operator ==( CGameID a, CGameID b )
+        public static bool operator ==(CGameID a, CGameID b)
         {
-            if ( System.Object.ReferenceEquals( a, b ) )
+            if (System.Object.ReferenceEquals(a, b))
                 return true;
 
-            if ( ( ( object )a == null ) || ( ( object )b == null ) )
+            if (((object)a == null) || ((object)b == null))
                 return false;
 
             return a.gameid.Data == b.gameid.Data;
         }
 
-        public static bool operator !=( CGameID a, CGameID b )
+        public static bool operator !=(CGameID a, CGameID b)
         {
-            return !( a == b );
+            return !(a == b);
         }
 
         public override int GetHashCode()

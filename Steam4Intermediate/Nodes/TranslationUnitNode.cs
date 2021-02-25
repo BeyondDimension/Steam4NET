@@ -1,6 +1,4 @@
-﻿using System;
-using System.Xml;
-using Steam4Intermediate.NodeBehavior;
+﻿using System.Xml;
 
 namespace Steam4Intermediate.Nodes
 {
@@ -9,7 +7,6 @@ namespace Steam4Intermediate.Nodes
         public TranslationUnitNode(XmlAttributeCollection collection)
             : base(collection)
         {
-
         }
     }
 }

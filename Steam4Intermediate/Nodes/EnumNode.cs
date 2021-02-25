@@ -1,7 +1,7 @@
-﻿using System;
-using System.Xml;
+﻿using Steam4Intermediate.NodeBehavior;
+using System;
 using System.Collections.Generic;
-using Steam4Intermediate.NodeBehavior;
+using System.Xml;
 
 namespace Steam4Intermediate.Nodes
 {
@@ -24,29 +24,29 @@ namespace Steam4Intermediate.Nodes
 
         public override void EmitCode(Generator generator, int depth, int ident)
         {
-            if ( String.IsNullOrEmpty( GetName() ) )
+            if (String.IsNullOrEmpty(GetName()))
                 return;
 
             INode returntype;
             bool constness, pointer;
 
-            string types = base.ResolveType( 1, out returntype, out constness, out pointer );
+            string types = base.ResolveType(1, out returntype, out constness, out pointer);
 
-            types = generator.ResolveType( types, constness, pointer, true, false );
+            types = generator.ResolveType(types, constness, pointer, true, false);
 
-            generator.EmitLine( "public enum " + name + " : " + EnumShortCodes[types], depth );
-            generator.EmitLine( "{", depth );
+            generator.EmitLine("public enum " + name + " : " + EnumShortCodes[types], depth);
+            generator.EmitLine("{", depth);
 
-            foreach( INode child in children )
+            foreach (INode child in children)
             {
-                if ( child is EnumConstantNode )
+                if (child is EnumConstantNode)
                 {
-                    generator.EmitLine( String.Format( "{0} = {1},", child.GetName(), child.GetAttribute( "value" ) ), depth + 1 );
+                    generator.EmitLine(String.Format("{0} = {1},", child.GetName(), child.GetAttribute("value")), depth + 1);
                 }
             }
 
-            generator.EmitLine( "};", depth );
-            generator.EmitLine( "", depth );
+            generator.EmitLine("};", depth);
+            generator.EmitLine("", depth);
         }
 
         public int EmitCodeInnerStructCallback(Generator generator, int depth)
@@ -73,6 +73,5 @@ namespace Steam4Intermediate.Nodes
 
             return -1;
         }
-
     }
 }

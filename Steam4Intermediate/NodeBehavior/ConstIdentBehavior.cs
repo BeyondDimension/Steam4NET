@@ -1,5 +1,4 @@
-﻿using System;
-using System.Xml;
+﻿using System.Xml;
 
 namespace Steam4Intermediate.NodeBehavior
 {

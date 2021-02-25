@@ -1,5 +1,4 @@
-﻿using System;
-using System.Xml;
+﻿using System.Xml;
 
 namespace Steam4Intermediate.NodeBehavior
 {
@@ -12,18 +11,18 @@ namespace Steam4Intermediate.NodeBehavior
 
         public override void LinkNode(Generator generator)
         {
-            base.LinkNode( generator );
+            base.LinkNode(generator);
 
             string id = GetAttribute("result_type");
 
-            if ( id != null )
+            if (id != null)
             {
-                typeNode = generator.GetNodeByID( id );
+                typeNode = generator.GetNodeByID(id);
                 typeNode.AddChild(this);
             }
         }
 
-        public override string ResolveType( int depth, out INode type, out bool constness, out bool pointer )
+        public override string ResolveType(int depth, out INode type, out bool constness, out bool pointer)
         {
             pointer = true;
             constness = false;
@@ -41,7 +40,5 @@ namespace Steam4Intermediate.NodeBehavior
             return "Func return: (" + base.ResolveType( depth + 1, out returntype, out retconstness, out retpointer ) + ")";
              */
         }
-
-
     }
 }

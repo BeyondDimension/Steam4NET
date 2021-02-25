@@ -1,11 +1,7 @@
-﻿using System;
-using System.Threading;
-
-using Steam4NET;
-using System.Diagnostics;
-using System.Text;
-using System.IO;
+﻿using Steam4NET;
+using System;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Steam4Test
 {
@@ -285,7 +281,6 @@ namespace Steam4Test
             Console.WriteLine("Ok (" + numberOfCurrentPlayers.m_cPlayers + ")");
 
             Marshal.FreeHGlobal(pData);
-
 
             Console.Write("Games running: ");
             for (int i = 0; i < clientuser.NumGamesRunning(); i++)

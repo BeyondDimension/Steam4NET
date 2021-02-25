@@ -1,5 +1,4 @@
-﻿using System;
-using System.Xml;
+﻿using System.Xml;
 
 namespace Steam4Intermediate.NodeBehavior
 {
@@ -18,32 +17,31 @@ namespace Steam4Intermediate.NodeBehavior
             typeNode = null;
         }
 
-        public override void LinkNode( Generator generator )
+        public override void LinkNode(Generator generator)
         {
-            string id = GetAttribute( "file" );
+            string id = GetAttribute("file");
 
-            if ( id != null )
+            if (id != null)
             {
-                fileNode = generator.GetNodeByID( id );
-                fileNode.AddChild( this );
+                fileNode = generator.GetNodeByID(id);
+                fileNode.AddChild(this);
             }
 
-            id = GetAttribute( "context" );
+            id = GetAttribute("context");
 
-            if ( id != null )
+            if (id != null)
             {
-                contextNode = generator.GetNodeByID( id );
-                contextNode.AddChild( this );
+                contextNode = generator.GetNodeByID(id);
+                contextNode.AddChild(this);
             }
 
-            id = GetAttribute( "type" );
+            id = GetAttribute("type");
 
             if (id != null)
             {
                 typeNode = generator.GetNodeByID(id);
                 typeNode.AddChild(this);
             }
-
 
             string context_id = GetContextAttribute("type");
 
@@ -56,23 +54,21 @@ namespace Steam4Intermediate.NodeBehavior
             }
         }
 
-        public override string ResolveType( int depth, out INode type, out bool constness, out bool pointer )
+        public override string ResolveType(int depth, out INode type, out bool constness, out bool pointer)
         {
             type = this;
             constness = false;
             pointer = false;
 
-            if ( typeNode == null || depth < 0 )
+            if (typeNode == null || depth < 0)
             {
-                if ( constIdentNode != null )
+                if (constIdentNode != null)
                     constness = true;
 
                 return GetName();
             }
 
-            return typeNode.ResolveType( depth, out type, out constness, out pointer );
+            return typeNode.ResolveType(depth, out type, out constness, out pointer);
         }
-
-
     }
 }

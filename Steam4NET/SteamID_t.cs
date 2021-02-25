@@ -6,7 +6,7 @@ namespace Steam4NET
     // Summary:
     //     Used to store a SteamID in callbacks (With proper alignment / padding).
     //     You probably don't want to use this type directly, convert it to CSteamID.
-    [StructLayout(LayoutKind.Sequential, Pack= 8)]
+    [StructLayout(LayoutKind.Sequential, Pack = 8)]
     public struct SteamID_t
     {
         public UInt32 low32Bits;    // m_unAccountID (32)

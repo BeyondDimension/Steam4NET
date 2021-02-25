@@ -1,5 +1,4 @@
-﻿using System;
-using System.Xml;
+﻿using System.Xml;
 
 namespace Steam4Intermediate.NodeBehavior
 {
@@ -10,11 +9,9 @@ namespace Steam4Intermediate.NodeBehavior
         {
         }
 
-        public override string ResolveType( int depth, out INode type, out bool constness, out bool pointer )
+        public override string ResolveType(int depth, out INode type, out bool constness, out bool pointer)
         {
-            return base.ResolveType( depth - 1, out type, out constness, out pointer );
+            return base.ResolveType(depth - 1, out type, out constness, out pointer);
         }
-
-
     }
 }

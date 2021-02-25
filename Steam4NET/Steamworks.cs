@@ -1,12 +1,10 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.IO;
-using Microsoft.Win32;
-using System.Text;
 using System.Runtime.InteropServices;
-using Steam4NET.Core;
 
 /*
- portions of Steamworks class provided by Rick - http://gib.me/
+ Steamworks and NativeWrapper classes provided by Rick - http://gib.me/
 */
 
 namespace Steam4NET
@@ -15,7 +13,6 @@ namespace Steam4NET
     {
         private struct Native
         {
-
             [DllImport("kernel32.dll", SetLastError = true)]
             internal static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
 
@@ -25,14 +22,12 @@ namespace Steam4NET
             [DllImport("kernel32.dll", SetLastError = true)]
             internal static extern IntPtr SetDllDirectory(string lpPathName);
 
-
             internal const UInt32 LOAD_WITH_ALTERED_SEARCH_PATH = 8;
 
-
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+            [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Ansi)]
             internal delegate IntPtr _f(string version);
 
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+            [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Ansi)]
             internal delegate IntPtr CreateInterface(string version, IntPtr returnCode);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -57,18 +52,10 @@ namespace Steam4NET
 
                 return (TDelegate)(object)Marshal.GetDelegateForFunctionPointer(address, typeof(TDelegate));
             }
-
         }
-
-
 
         private static IntPtr SteamClientHandle = IntPtr.Zero;
         private static IntPtr SteamHandle = IntPtr.Zero;
-
-        public static bool Is64Bit()
-        {
-            return IntPtr.Size == 8;
-        }
 
         /// <summary>
         /// Gets the steam installation path.
@@ -80,26 +67,16 @@ namespace Steam4NET
 
             try
             {
-                if (Is64Bit())
-                {
-                    installPath = (string)Registry.GetValue(
-                         @"HKEY_CURRENT_USER\Software\Valve\Steam",
-                         "SteamPath",
-                         null);
-                }
-                else
-                {
-                    installPath = (string)Registry.GetValue(
-                         @"HKEY_LOCAL_MACHINE\Software\Valve\Steam",
-                         "InstallPath",
-                         null);
-                }
+                installPath = (string)Registry.GetValue(
+                     @"HKEY_CURRENT_USER\SOFTWARE\Valve\Steam",
+                     "SteamPath",
+                     null);
             }
             catch
             {
             }
 
-            return installPath;
+            return System.IO.Path.GetFullPath(installPath);
         }
 
         private static Native.CreateInterface CallCreateInterface;
@@ -109,7 +86,7 @@ namespace Steam4NET
         /// <typeparam name="TClass">The interface type. ex: ISteamClient009</typeparam>
         /// <param name="version">The interface version.</param>
         /// <returns>An instance of an interface object, or null if an error occurred.</returns>
-        public static TClass CreateInterface<TClass>() where TClass : class
+        public static TClass CreateInterface<TClass>() where TClass : InteropHelp.INativeWrapper, new()
         {
             if (CallCreateInterface == null)
                 throw new InvalidOperationException("Steam4NET library has not been initialized.");
@@ -117,9 +94,10 @@ namespace Steam4NET
             IntPtr address = CallCreateInterface(InterfaceVersions.GetInterfaceIdentifier(typeof(TClass)), IntPtr.Zero);
 
             if (address == IntPtr.Zero)
-                return default(TClass);
+                return default;
 
-            var rez = JITEngine.GenerateClass<TClass>(address);
+            var rez = new TClass();
+            rez.SetupFunctions(address);
 
             return rez;
         }
@@ -131,7 +109,7 @@ namespace Steam4NET
         /// <typeparam name="TClass">The interface type. ex: ISteam006</typeparam>
         /// <param name="version">The interface version.</param>
         /// <returns>An instance of an interface object, or null if an error occurred.</returns>
-        public static TClass CreateSteamInterface<TClass>() where TClass : class
+        public static TClass CreateSteamInterface<TClass>() where TClass : InteropHelp.INativeWrapper, new()
         {
             if (CallCreateSteamInterface == null)
                 throw new InvalidOperationException("Steam4NET library has not been initialized.");
@@ -139,9 +117,10 @@ namespace Steam4NET
             IntPtr address = CallCreateSteamInterface(InterfaceVersions.GetInterfaceIdentifier(typeof(TClass)));
 
             if (address == IntPtr.Zero)
-                return default(TClass);
+                return default;
 
-            var rez = JITEngine.GenerateClass<TClass>(address);
+            var rez = new TClass();
+            rez.SetupFunctions(address);
 
             return rez;
         }
@@ -188,7 +167,7 @@ namespace Steam4NET
         {
             if (CallSteamGetAPICallResult == null)
                 throw new InvalidOperationException("Steam4NET library has not been initialized.");
-            
+
             return CallSteamGetAPICallResult(hSteamPipe, hSteamAPICall, pCallback, cubCallback, iCallbackExpected, ref pbFailed);
         }
 
@@ -223,12 +202,8 @@ namespace Steam4NET
                 return true;
 
             string path = GetInstallPath();
-
             if (!string.IsNullOrEmpty(path))
                 Native.SetDllDirectory(path + ";" + Path.Combine(path, "bin"));
-
-            if (Is64Bit())
-                throw new InvalidOperationException("Cannot load Steam library in 64-bit mode. No such library exists");
 
             path = Path.Combine(path, "steam.dll");
 
@@ -260,12 +235,10 @@ namespace Steam4NET
 
             if (!string.IsNullOrEmpty(path))
                 Native.SetDllDirectory(path + ";" + Path.Combine(path, "bin"));
-
-            if (Is64Bit())
+            if (Environment.Is64BitProcess)
                 path = Path.Combine(path, "steamclient64.dll");
             else
                 path = Path.Combine(path, "steamclient.dll");
-
             IntPtr module = Native.LoadLibraryEx(path, IntPtr.Zero, Native.LOAD_WITH_ALTERED_SEARCH_PATH);
 
             if (module == IntPtr.Zero)

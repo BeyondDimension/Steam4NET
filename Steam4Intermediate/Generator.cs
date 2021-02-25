@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections;
+﻿using Steam4Intermediate.Nodes;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Xml;
-using System.IO;
-using System.Text.RegularExpressions;
-using Steam4Intermediate.Nodes;
-using System.Diagnostics;
 
 namespace Steam4Intermediate
 {
@@ -85,15 +83,15 @@ namespace Steam4Intermediate
 
         private StringBuilder buffer = new StringBuilder();
 
-        public void ParseXMLDoc( XmlDocument doc )
+        public void ParseXMLDoc(XmlDocument doc)
         {
             XmlNode root = doc.ChildNodes[1];
 
-            RecursiveAddNode( root );
+            RecursiveAddNode(root);
 
-            foreach( INode node in NodesByID.Values )
+            foreach (INode node in NodesByID.Values)
             {
-                node.LinkNode( this );
+                node.LinkNode(this);
             }
 
             foreach (INode node in NodesByType[typeof(FileNode)])
@@ -105,15 +103,15 @@ namespace Steam4Intermediate
             }
         }
 
-        public void FlushToFile( string file )
+        public void FlushToFile(string file)
         {
-            File.WriteAllText( "../../../Steam4Net/Autogen/" + file + ".cs", buffer.ToString() );
+            File.WriteAllText("../../../Steam4Net/Autogen/" + file + ".cs", buffer.ToString());
             buffer = new StringBuilder();
         }
 
-        public void EmitLine( string line, int depth )
+        public void EmitLine(string line, int depth)
         {
-            buffer.AppendFormat( "{0}{1}\r\n", new String( '\t', depth ), line );
+            buffer.AppendFormat("{0}{1}\r\n", new String('\t', depth), line);
         }
 
         public int GetMarker()
@@ -121,25 +119,25 @@ namespace Steam4Intermediate
             return buffer.Length;
         }
 
-        public void InsertLine( string line, int marker, int depth)
+        public void InsertLine(string line, int marker, int depth)
         {
             buffer.Insert(marker, String.Format("{0}{1}\r\n", new String('\t', depth), line));
         }
 
-        public string ResolveType( string inputtype, bool constness, bool pointer, bool returntype, bool allow_ref )
+        public string ResolveType(string inputtype, bool constness, bool pointer, bool returntype, bool allow_ref)
         {
             string outtype;
 
             Debug.Assert(inputtype != null);
 
-            if ( !CTypeMap.TryGetValue( inputtype, out outtype ) )
+            if (!CTypeMap.TryGetValue(inputtype, out outtype))
             {
                 outtype = inputtype;
             }
 
-            if ( pointer )
+            if (pointer)
             {
-                if ( outtype == "SByte" )
+                if (outtype == "SByte")
                 {
                     if (constness || returntype)
                     {
@@ -164,43 +162,42 @@ namespace Steam4Intermediate
             return outtype;
         }
 
-        private void RecursiveAddNode( XmlNode node )
+        private void RecursiveAddNode(XmlNode node)
         {
             Type parserType;
 
-            if( !NodeTypeMap.TryGetValue( node.Name, out parserType ) )
+            if (!NodeTypeMap.TryGetValue(node.Name, out parserType))
             {
-                if(node.Name == "MacroDefine")
+                if (node.Name == "MacroDefine")
                 {
                     MacroDefinitions.Add(node.Attributes["name"].Value, node.Attributes["value"].Value);
-                } else
+                }
+                else
                 {
                     Console.WriteLine("Unhandled node type " + node.Name);
                 }
-                
             }
 
-            if ( parserType != null )
+            if (parserType != null)
             {
-                XmlNode idnode = node.Attributes.GetNamedItem( "id" );
+                XmlNode idnode = node.Attributes.GetNamedItem("id");
 
-                if ( idnode != null )
+                if (idnode != null)
                 {
-
                     INode currentNode;
-                    if ( NodesByID.TryGetValue( idnode.Value, out currentNode ) )
+                    if (NodesByID.TryGetValue(idnode.Value, out currentNode))
                     {
-                        currentNode.SetContextAttributes( node.Attributes );
+                        currentNode.SetContextAttributes(node.Attributes);
                     }
                     else
                     {
                         INode newNode = parserType.GetConstructor(new System.Type[] { typeof(XmlAttributeCollection) }).Invoke(new object[] { node.Attributes }) as INode;
 
-                        NodesByID.Add( idnode.Value, newNode );
+                        NodesByID.Add(idnode.Value, newNode);
 
-                        List<INode> types = GetNodesByType( newNode.GetType() );
+                        List<INode> types = GetNodesByType(newNode.GetType());
 
-                        if ( types == null )
+                        if (types == null)
                         {
                             types = new List<INode>();
                             NodesByType.Add(newNode.GetType(), types);
@@ -208,16 +205,14 @@ namespace Steam4Intermediate
 
                         types.Add(newNode);
                     }
-
                 }
             }
 
-            foreach( XmlNode child in node.ChildNodes )
+            foreach (XmlNode child in node.ChildNodes)
             {
-                RecursiveAddNode( child );
+                RecursiveAddNode(child);
             }
         }
-
 
         public INode GetNodeByID(string id)
         {
@@ -246,10 +241,10 @@ namespace Steam4Intermediate
         {
             string value;
 
-            if(MacroDefinitions.TryGetValue(name, out value))
+            if (MacroDefinitions.TryGetValue(name, out value))
                 return value;
 
-            return null; 
+            return null;
         }
     }
 }
