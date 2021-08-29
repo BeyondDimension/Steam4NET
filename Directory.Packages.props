@@ -1,0 +1,5 @@
+<Project>
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.Win32.Registry" Version="5.0.0" />
+  </ItemGroup>
+</Project>
