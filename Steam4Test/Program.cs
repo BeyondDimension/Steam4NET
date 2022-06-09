@@ -1,4 +1,4 @@
-﻿using Steam4NET;
+using Steam4NET;
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -9,7 +9,7 @@ namespace Steam4Test
     {
         public static int Main()
         {
-            Environment.SetEnvironmentVariable("SteamAppId", "480");
+            Environment.SetEnvironmentVariable("SteamAppId", "730");
 
             Console.Write("Loading Steam2 and Steam3... ");
 
@@ -36,7 +36,7 @@ namespace Steam4Test
 
             Console.Write("GetVersion: ");
             StringBuilder version = new StringBuilder();
-            if (steam006.GetVersion(version, (uint)version.Capacity) != 0)
+            if (steam006.GetVersion(version) != 0)
             {
                 Console.WriteLine("Ok (" + version.ToString() + ")");
             }
@@ -73,7 +73,7 @@ namespace Steam4Test
 
             Console.Write("WriteFile: ");
             byte[] fileContent = System.Text.UTF8Encoding.UTF8.GetBytes("test");
-            if (steam006.WriteFile(fileContent, 1, (uint)fileContent.Length, hFile, ref steamError) == fileContent.Length)
+            if (steam006.WriteFile(fileContent, (uint)fileContent.Length, hFile, ref steamError) == fileContent.Length)
             {
                 Console.WriteLine("Ok");
             }
@@ -139,7 +139,7 @@ namespace Steam4Test
             ISteamUserStats002 userstats002 = steamclient.GetISteamUserStats<ISteamUserStats002>(user, pipe);
             if (userstats002 == null)
             {
-                Console.WriteLine("userstats002 is null !");
+                Console.WriteLine("userstats010 is null !");
                 return -1;
             }
             ISteamUserStats010 userstats010 = steamclient.GetISteamUserStats<ISteamUserStats010>(user, pipe);
@@ -148,6 +148,15 @@ namespace Steam4Test
                 Console.WriteLine("userstats010 is null !");
                 return -1;
             }
+            ISteamRemoteStorage012 remoteStorage012 = steamclient.GetISteamRemoteStorage<ISteamRemoteStorage012>(user, pipe);
+            if (remoteStorage012 == null)
+            {
+                Console.WriteLine("remoteStorage012 is null !");
+                return -1;
+            }
+
+            Console.WriteLine("remoteStorage012  FileCount : " + remoteStorage012.GetFileCount());
+            
             ISteamFriends013 steamfriends013 = steamclient.GetISteamFriends<ISteamFriends013>(user, pipe);
             if (steamfriends013 == null)
             {

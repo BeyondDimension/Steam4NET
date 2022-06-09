@@ -63,7 +63,7 @@ namespace Steam4NET
         private IntPtr DTorISteamRemoteStorage01252;
     };
 
-    [InteropHelp.InterfaceVersion("STEAMREMOTESTORAGE_INTERFACE_VERSION012")]
+    [InteropHelp.InterfaceVersion("STEAMREMOTESTORAGE_INTERFACE_VERSION016")]
     public class ISteamRemoteStorage012 : InteropHelp.NativeWrapper<ISteamRemoteStorage012VTable>
     {
         [return: MarshalAs(UnmanagedType.I1)]
