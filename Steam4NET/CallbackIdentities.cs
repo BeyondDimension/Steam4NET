@@ -1,17 +1,16 @@
-﻿using System;
+﻿using System.Reflection;
 
-namespace Steam4NET
+namespace Steam4NET;
+
+class CallbackIdentities
 {
-    class CallbackIdentities
+    public static int GetCallbackIdentity(Type callbackStruct)
     {
-        public static int GetCallbackIdentity(Type callbackStruct)
+        foreach (var attribute in callbackStruct.GetCustomAttributes<InteropHelp.CallbackIdentityAttribute>(false))
         {
-            foreach (InteropHelp.CallbackIdentityAttribute attribute in callbackStruct.GetCustomAttributes(typeof(InteropHelp.CallbackIdentityAttribute), false))
-            {
-                return attribute.Identity;
-            }
-
-            throw new Exception("Callback number not found for struct " + callbackStruct);
+            return attribute.Identity;
         }
+
+        throw new Exception("Callback number not found for struct " + callbackStruct);
     }
 }

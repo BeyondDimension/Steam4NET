@@ -1,18 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<IsTrimmable>true</IsTrimmable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="autogen\CGameID.cs" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="autogen\CGameID.cs" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Include="autogen\CGameID.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <!--<PackageReference Include="Microsoft.Win32.Registry" />-->
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="autogen\CGameID.cs" />
+	</ItemGroup>
 </Project>

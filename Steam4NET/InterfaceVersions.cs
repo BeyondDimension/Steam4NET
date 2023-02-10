@@ -1,17 +1,14 @@
-﻿using System;
+﻿namespace Steam4NET;
 
-namespace Steam4NET
+class InterfaceVersions
 {
-    class InterfaceVersions
+    public static string GetInterfaceIdentifier(Type steamClass)
     {
-        public static string GetInterfaceIdentifier(Type steamClass)
+        foreach (InteropHelp.InterfaceVersionAttribute attribute in steamClass.GetCustomAttributes(typeof(InteropHelp.InterfaceVersionAttribute), false))
         {
-            foreach (InteropHelp.InterfaceVersionAttribute attribute in steamClass.GetCustomAttributes(typeof(InteropHelp.InterfaceVersionAttribute), false))
-            {
-                return attribute.Identifier;
-            }
-
-            throw new Exception("Version identifier not found for class " + steamClass);
+            return attribute.Identifier;
         }
+
+        throw new Exception("Version identifier not found for class " + steamClass);
     }
 }
